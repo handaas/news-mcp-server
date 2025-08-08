@@ -97,20 +97,7 @@ python server/mcp_server.py streamable-http
 }
 ```
 
-## 使用官方Remote服务
 
-### 1. 直接设置Cursor / Cherry Studio MCP配置
-
-```json
-{
-  "mcpServers": {
-    "news-mcp-server":{
-      "type": "streamableHttp",
-      "url": "https://mcp.handaas.com/news/news_bigdata?token={token}"  
-      }
-  }
-}
-```
 
 ### 注意：integrator_id、secret_id、secret_key及token需要登录 https://www.handaas.com/ 进行注册开通平台获取
 
