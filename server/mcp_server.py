@@ -9,7 +9,7 @@ import sys
 
 load_dotenv()
 
-mcp = FastMCP("舆情大数据", instructions="舆情大数据",dependencies=["python-dotenv", "requests"])
+mcp = FastMCP("舆情大数据", instructions="舆情大数据", dependencies=["python-dotenv", "requests"])
 
 INTEGRATOR_ID = os.environ.get("INTEGRATOR_ID")
 SECRET_ID = os.environ.get("SECRET_ID")
@@ -69,48 +69,49 @@ def call_api(product_id: str, params: dict) -> dict:
         return "查询失败"
     
 @mcp.tool()
-def news_bigdata_fuzzy_search(matchKeyword: str, pageIndex: int = None, pageSize: int = None) -> dict:
+def news_bigdata_fuzzy_search(matchKeyword: str, pageIndex: int = 1, pageSize: int = 50) -> dict:
     """
     该接口的功能是根据提供的企业名称、人名、品牌、产品、岗位等关键词模糊查询相关企业列表。返回匹配的企业列表及其详细信息，用于查找和识别特定的企业信息。
 
 
     请求参数:
     - matchKeyword: 匹配关键词 类型：string - 查询各类信息包含匹配关键词的企业
-    - pageIndex: 分页开始位置 类型：int
-    - pageSize: 分页结束位置 类型：int - 一页最多获取50条数据
+    - pageIndex: 分页开始位置 类型：int - 默认从1开始
+    - pageSize: 分页结束位置 类型：int - 一页最多获取50条数据, 不能超过50, 超过50的统一用50代替
 
     返回参数:
     - total: 总数 类型：int
-    - annualTurnover: 年营业额 类型：string
-    - formerNames: 曾用名 类型：list of string
-    - address: 注册地址 类型：string
-    - foundTime: 成立时间 类型：string
-    - enterpriseType: 企业主体类型 类型：string
-    - legalRepresentative: 法定代表人 类型：string
-    - homepage: 企业官网 类型：string
-    - legalRepresentativeId: 法定代表人id 类型：string
-    - prmtKeys: 推广关键词 类型：list of string
-    - operStatus: 企业状态 类型：string
-    - logo: 企业logo 类型：string
-    - nameId: 企业id 类型：string
-    - regCapitalCoinType: 注册资本币种 类型：string
-    - regCapitalValue: 注册资本金额 类型：int
-    - name: 企业名称 类型：string
-    - catchReason: 命中原因 类型：dict
-    - catchReason.name: 企业名称 类型：list of string
-    - catchReason.formerNames: 曾用名 类型：list of string
-    - catchReason.holderList: 股东 类型：list of string
-    - catchReason.recruitingName: 招聘岗位 类型：list of string
-    - catchReason.address: 地址 类型：list of string
-    - catchReason.operBrandList: 品牌 类型：list of string
-    - catchReason.goodsNameList: 产品名称 类型：list of string
-    - catchReason.phoneList: 固话 类型：list of string
-    - catchReason.emailList: 邮箱 类型：list of string
-    - catchReason.mobileList: 手机 类型：list of string
-    - catchReason.patentNameList: 专利 类型：list of string
-    - catchReason.certNameList: 资质证书 类型：list of string
-    - catchReason.prmtKeys: 推广关键词 类型：list of string
-    - catchReason.socialCreditCode: 统一社会信用代码 类型：list of string
+    - resultList:查询返回企业信息列表 类型：list of dict:
+        - annualTurnover: 年营业额 类型：string
+        - formerNames: 曾用名 类型：list of string
+        - address: 注册地址 类型：string
+        - foundTime: 成立时间 类型：string
+        - enterpriseType: 企业主体类型 类型：string
+        - legalRepresentative: 法定代表人 类型：string
+        - legalRepresentativeId: 法定代表人id 类型：string
+        - homepage: 企业官网 类型：string
+        - prmtKeys: 推广关键词 类型：list of string
+        - operStatus: 企业状态 类型：string
+        - logo: 企业logo 类型：string
+        - nameId: 企业id 类型：string
+        - regCapitalCoinType: 注册资本币种 类型：string
+        - regCapitalValue: 注册资本金额 类型：int
+        - name: 企业名称 类型：string
+        - catchReason: 命中原因 类型：dict
+            - catchReason.name: 企业名称 类型：list of string
+            - catchReason.formerNames: 曾用名 类型：list of string
+            - catchReason.holderList: 股东 类型：list of string
+            - catchReason.recruitingName: 招聘岗位 类型：list of string
+            - catchReason.address: 地址 类型：list of string
+            - catchReason.operBrandList: 品牌 类型：list of string
+            - catchReason.goodsNameList: 产品名称 类型：list of string
+            - catchReason.phoneList: 固话 类型：list of string
+            - catchReason.emailList: 邮箱 类型：list of string
+            - catchReason.mobileList: 手机 类型：list of string
+            - catchReason.patentNameList: 专利 类型：list of string
+            - catchReason.certNameList: 资质证书 类型：list of string
+            - catchReason.prmtKeys: 推广关键词 类型：list of string
+            - catchReason.socialCreditCode: 统一社会信用代码 类型：list of string
     """
     # 构建请求参数
     params = {
@@ -134,21 +135,13 @@ def news_bigdata_news_stats(matchKeyword: str, keywordType: str = None) -> dict:
     请求参数:
     - matchKeyword: 匹配关键词 类型：string - 企业名称/注册号/统一社会信用代码/企业id，如果没有企业全称则先调取fuzzy_search接口获取企业全称。
     - keywordType: 主体类型 类型：select - 主体类型枚举（name：企业名称，nameId：企业id，regNumber：注册号，socialCreditCode：统一社会信用代码)
-# 字段	类型	中文名	描述
-# newsSentimentStats	dict	舆情情感类型统计	neutral：中立，negative：消极，positive：积极，unknown：未知
-# sentimentLabelList	list of string	所有舆情类别列表	neutral：中立，negative：消极，positive：积极
-# newsSentimentTrend	dict	舆情趋势	
-# newsSentimentTrend字段
 
-# 字段	类型	中文名	描述
-# month	string	月份	格式：yyyy-mm
-# stats	dict	情感类型	negative：消极，positive：积极
     返回参数:
-    - newsSentimentStats: 舆情情感类型统计 类型：dict  - neutral：中立，negative：消极，positive：积极，unknown：未知
-    - sentimentLabelList: 所有舆情类别列表 类型：list of string -  neutral：中立，negative：消极，positive：积极
+    - newsSentimentStats: 舆情情感类型统计 类型：dict - neutral：中立，negative：消极，positive：积极，unknown：未知
+    - sentimentLabelList: 所有舆情类别列表 类型：list of string - neutral：中立，negative：消极，positive：积极
     - newsSentimentTrend: 舆情趋势 类型：dict
-        - newsSentimentTrend.month: 月份 类型：string - 格式：yyyy-mm
-        - newsSentimentTrend.stats: 情感类型 类型：dict - negative：消极，positive：积极
+        - month: 月份 类型：string - 格式：yyyy-mm
+        - stats: 情感类型 类型：dict - negative：消极，positive：积极
     """
     # 构建请求参数
     params = {
@@ -171,19 +164,21 @@ def news_bigdata_news_list(matchKeyword: str, keywordType: str = None, pageIndex
     请求参数:
     - matchKeyword: 匹配关键词 类型：string - 企业名称/注册号/统一社会信用代码/企业id，如果没有企业全称则先调取fuzzy_search接口获取企业全称。
     - keywordType: 主体类型 类型：select - 主体类型枚举（name：企业名称，nameId：企业id，regNumber：注册号，socialCreditCode：统一社会信用代码)
-    - pageIndex: 页码 类型：int - 从1开始
-    - pageSize: 分页大小 类型：int - 一页最多获取50条
+    - pageIndex: 页码 类型：int - 默认从1开始
+    - pageSize: 分页大小 类型：int - 一页最多获取50条数据, 不能超过50, 超过50的统一用50代替
     - sentimentLabel: 舆情类别 类型：int - 舆情类别枚举（0：负面，1：正面，2：中性，3：未知）
 
 
     返回参数:
-    - newsBrief: 新闻简介 类型：string
-    - newsLink: 新闻链接 类型：string
-    - newsPublishTime: 新闻发布时间 类型：string
-    - newsSource: 新闻来源 类型：string
-    - newsTitle: 新闻标题 类型：string
-    - relatedEnterprises: 相关企业列表 类型：list of dict
-    - sentimentLabel: 舆情类别 类型：int - 舆情类别枚举（0：负面，1：正面，2：中性，3：未知）
+    - resultList: 结果列表 类型：list of dict
+        - newsBrief: 新闻简介 类型：string
+        - newsLink: 新闻链接 类型：string
+        - newsPublishTime: 新闻发布时间 类型：string
+        - newsSource: 新闻来源 类型：string
+        - newsTitle: 新闻标题 类型：string
+        - relatedEnterprises: 相关企业列表 类型：list of dict
+        - sentimentLabel: 舆情类别 类型：int - 舆情类别枚举（0：负面，1：正面，2：中性，3：未知）
+    - total: 总数 类型：int
     """
     # 构建请求参数
     params = {
